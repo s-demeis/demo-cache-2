@@ -1,0 +1,19 @@
+name: demo cache
+on:
+    workflow_dispatch:
+jobs:
+    cache:
+        name: cache
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v6
+            - name: read or write cache
+              id: cache-step
+              uses: actions/cache@v5
+              with:
+                path: ~/.npm
+                key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+            - name: install dependencies
+              run: npm ci
+              if: steps.cache-step.outputs.cache-hit != 'true'
